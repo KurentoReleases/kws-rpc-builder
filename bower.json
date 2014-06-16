@@ -1,0 +1,23 @@
+{
+  "name": "kws-rpc-builder",
+  "description": "RPC library for browser and Node.js",
+  "license": "LGPL 2.1",
+  "keywords": [
+    "RPC",
+    "JsonRPC",
+    "XML-RPC",
+    "HTTP",
+    "WebP2P",
+    "WebSocket",
+    "DataChannel",
+    "WebWorker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "Kurento/kws-rpc-builder"
+  },
+  "authors": [
+    "Kurento <info@kurento.org> (http://kurento.org)",
+    "Jesús Leganés Combarro 'piranna' <piranna@gmail.com>"
+  ]
+}
