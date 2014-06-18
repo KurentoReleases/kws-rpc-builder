@@ -80,6 +80,62 @@ module.exports = Mapper;
  *
  */
 
+var JsonRpcClient  = require('./jsonrpcclient');
+
+
+exports.JsonRpcClient  = JsonRpcClient;
+
+},{"./jsonrpcclient":3}],3:[function(require,module,exports){
+/*
+ * (C) Copyright 2014 Kurento (http://kurento.org/)
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ */
+
+var RpcBuilder = require('../..');
+
+var WebSocket = require('ws');
+
+
+function JsonRpcClient(wsUrl, onRequest, onerror)
+{
+  var ws = new WebSocket(wsUrl);
+      ws.addEventListener('error', onerror);
+
+  var rpc = new RpcBuilder(RpcBuilder.packers.JsonRPC, ws, onRequest);
+
+  this.close       = rpc.close.bind(rpc);
+  this.sendRequest = rpc.encode.bind(rpc);
+};
+
+
+module.exports  = JsonRpcClient;
+
+},{"../..":4,"ws":10}],4:[function(require,module,exports){
+/*
+ * (C) Copyright 2014 Kurento (http://kurento.org/)
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ */
+
 var EventEmitter = require('events').EventEmitter;
 
 var inherits = require('inherits');
@@ -759,10 +815,12 @@ RpcBuilder.RpcNotification = RpcNotification;
 
 module.exports = RpcBuilder;
 
+var clients = require('./clients');
+
 RpcBuilder.clients = clients;
 RpcBuilder.packers = packers;
 
-},{"./Mapper":1,"./packers":5,"events":6,"inherits":7}],3:[function(require,module,exports){
+},{"./Mapper":1,"./clients":2,"./packers":7,"events":8,"inherits":9}],5:[function(require,module,exports){
 /**
  * JsonRPC 2.0 packer
  */
@@ -866,7 +924,7 @@ function unpack(message)
 exports.pack   = pack;
 exports.unpack = unpack;
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 function pack(message)
 {
   throw new TypeError("Not yet implemented");
@@ -881,7 +939,7 @@ function unpack(message)
 exports.pack   = pack;
 exports.unpack = unpack;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var JsonRPC = require('./JsonRPC');
 var XmlRPC  = require('./XmlRPC');
 
@@ -889,7 +947,7 @@ var XmlRPC  = require('./XmlRPC');
 exports.JsonRPC = JsonRPC;
 exports.XmlRPC  = XmlRPC;
 
-},{"./JsonRPC":3,"./XmlRPC":4}],6:[function(require,module,exports){
+},{"./JsonRPC":5,"./XmlRPC":6}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1194,7 +1252,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1219,4 +1277,49 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}]},{},[2])
+},{}],10:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var global = (function() { return this; })();
+
+/**
+ * WebSocket constructor.
+ */
+
+var WebSocket = global.WebSocket || global.MozWebSocket;
+
+/**
+ * Module exports.
+ */
+
+module.exports = WebSocket ? ws : null;
+
+/**
+ * WebSocket constructor.
+ *
+ * The third `opts` options object gets ignored in web browsers, since it's
+ * non-standard, and throws a TypeError if passed to the constructor.
+ * See: https://github.com/einaros/ws/issues/227
+ *
+ * @param {String} uri
+ * @param {Array} protocols (optional)
+ * @param {Object) opts (optional)
+ * @api public
+ */
+
+function ws(uri, protocols, opts) {
+  var instance;
+  if (protocols) {
+    instance = new WebSocket(uri, protocols);
+  } else {
+    instance = new WebSocket(uri);
+  }
+  return instance;
+}
+
+if (WebSocket) ws.prototype = WebSocket.prototype;
+
+},{}]},{},[4])
