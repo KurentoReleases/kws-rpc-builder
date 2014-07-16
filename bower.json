@@ -10,7 +10,10 @@
     "WebP2P",
     "WebSocket",
     "DataChannel",
-    "WebWorker"
+    "WebWorker",
+    "postMessage",
+    "pipe",
+    "stream"
   ],
   "repository": {
     "type": "git",
